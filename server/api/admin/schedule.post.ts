@@ -1,5 +1,5 @@
 import {db} from '~/drizzle/db'
-import {playTimes, schedules, songs, users, votes} from '~/drizzle/schema'
+import {playTimes, schedules, songs, users, votes, songReplayRequests} from '~/drizzle/schema'
 import {and, asc, count, desc, eq, gte, lte} from 'drizzle-orm'
 import {createSongSelectedNotification} from '../../services/notificationService'
 import {cacheService} from '~/server/services/cacheService'
@@ -134,6 +134,14 @@ export default defineEventHandler(async (event) => {
                 artist: schedule.song.artist,
                 playDate: schedule.playDate
             }, clientIP)
+
+            // 标记该歌曲的所有待处理重播申请为已完成
+            await db.update(songReplayRequests)
+                .set({ status: 'FULFILLED' })
+                .where(and(
+                    eq(songReplayRequests.songId, schedule.song.id),
+                    eq(songReplayRequests.status, 'PENDING')
+                ))
         }
 
         // 清除相关缓存

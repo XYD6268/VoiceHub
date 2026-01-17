@@ -24,6 +24,14 @@ export default defineEventHandler(async (event) => {
     if (url.hostname.includes('bilivideo.com') || url.hostname.includes('hdslb.com') || url.hostname.includes('bilibili.com') || url.hostname.includes('googlevideo.com')) {
         referer = 'https://www.bilibili.com/'
     }
+    // 针对网易云音乐的特殊处理
+    else if (url.hostname.includes('126.net') || url.hostname.includes('163.com')) {
+        referer = 'https://music.163.com/'
+    }
+    // 针对 QQ 音乐的特殊处理
+    else if (url.hostname.includes('qqmusic.qq.com') || url.hostname.includes('music.qq.com') || url.hostname.includes('y.qq.com')) {
+        referer = 'https://y.qq.com/'
+    }
 
     // 请求头
     const headers = {
